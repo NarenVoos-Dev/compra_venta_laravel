@@ -34,7 +34,11 @@
         </div>
     </div>
 
+    @include('partials.back-to-top')
+
     @include('partials.js')
+
+    @stack('scripts')
 </body>
 
 </html>

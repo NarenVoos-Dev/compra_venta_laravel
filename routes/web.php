@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryController;
 
 
 //Welcome ventana princiapl de laravel
@@ -21,4 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Categorias
+Route::middleware('auth')->group(function () {
+    Route::resource('categorias', CategoryController::class);
+});
 require __DIR__.'/auth.php';

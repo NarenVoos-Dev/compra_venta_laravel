@@ -13,6 +13,11 @@ class Category extends Model
         'description',
     ];
 
+    public static $rules = [
+        'name' => 'required|string|max:255|unique:categories,name',
+        'description' => 'nullable|string'
+    ];
+
     public function products()
     {
         return $this->hasMany(Product::class);
