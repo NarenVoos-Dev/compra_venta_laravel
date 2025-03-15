@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+
 
 
 //Welcome ventana princiapl de laravel
@@ -25,5 +27,6 @@ Route::middleware('auth')->group(function () {
 // Categorias
 Route::middleware('auth')->group(function () {
     Route::resource('categorias', CategoryController::class);
+    Route::resource('customers', CustomerController::class);
 });
 require __DIR__.'/auth.php';
