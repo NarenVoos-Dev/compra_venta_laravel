@@ -48,12 +48,18 @@
                                     <td>{{ $customer->name }}</td>
                                     <td>{{ $customer->email }}</td>
                                     <td>{{ $customer->phone }}</td>
-                                    <td>
+                                    <td class="text-center">
+                                        <!-- Botón de Editar con Icono -->
                                         <a href="{{ route('customers.edit', $customer->id) }}"
-                                            class="btn btn-warning btn-sm">Editar</a>
-                                        <button class="btn btn-danger btn-sm delete-btn"
-                                            data-id="{{ $customer->id }}">Eliminar</button>
-                                        
+                                            class="btn btn-warning btn-sm">
+                                            <i class="ri-edit-2-line"></i>
+                                        </a>
+
+                                        <!-- Botón de Eliminar con Icono y SweetAlert2 -->
+                                        <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $customer->id }}">
+                                            <i class="ri-delete-bin-6-line"></i>
+                                        </button>
+
                                         <form id="delete-form-{{ $customer->id }}"
                                             action="{{ route('customers.destroy', $customer->id) }}" method="POST"
                                             class="d-none">
@@ -61,6 +67,7 @@
                                             @method('DELETE')
                                         </form>
                                     </td>
+
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -78,7 +85,7 @@
 
 <script>
 $(document).ready(function() {
-  $('#tabla-clientes').DataTable({
+    $('#tabla-clientes').DataTable({
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros por página",
             "zeroRecords": "No se encontraron resultados",

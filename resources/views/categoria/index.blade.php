@@ -48,12 +48,16 @@
                                         <td>{{ $categoria->id }}</td>
                                         <td>{{ $categoria->name }}</td>
                                         <td>{{ $categoria->description }}</td>
-                                        <td>
+                                        <td class="text-center">
                                             <a href="{{ route('categorias.edit', $categoria->id) }}"
-                                                class="btn btn-warning btn-sm">Editar</a>
+                                                class="btn btn-warning btn-sm">
+                                                <i class="ri-edit-2-line"></i>
+                                            </a>
 
                                             <button class="btn btn-danger btn-sm delete-btn"
-                                                data-id="{{ $categoria->id }}">Eliminar</button>
+                                                data-id="{{ $categoria->id }}">
+                                                <i class="ri-delete-bin-6-line"></i>
+                                            </button>
 
                                             <form id="delete-form-{{ $categoria->id }}"
                                                 action="{{ route('categorias.destroy', $categoria->id) }}" method="POST"
