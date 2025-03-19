@@ -57,7 +57,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="">
+                    <a class="nav-link menu-link" href="{{ route('users.index') }}">
                         <i class="ri-user-settings-line"></i> <span>Usuarios</span>
                     </a>
                 </li>

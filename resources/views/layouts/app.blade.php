@@ -28,12 +28,6 @@
 
     @include('partials.back-to-top')
 
-    <div class="customizer-setting d-none d-md-block">
-        <div class="p-2 shadow-lg btn-info btn-rounded btn btn-icon btn-lg" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
-            <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
-        </div>
-    </div>
-
     @include('partials.back-to-top')
 
     @include('partials.js')
