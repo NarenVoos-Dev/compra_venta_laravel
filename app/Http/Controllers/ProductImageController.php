@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ProductImage;
+use Illuminate\Support\Facades\Storage;
 
 class ProductImageController extends Controller
 {
@@ -57,8 +59,18 @@ class ProductImageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $image = ProductImage::find($id);
+
+        if (!$image) {
+            return response()->json(['success' => false, 'message' => 'Imagen no encontrada'], 404);
+        }
+
+        // Eliminar la imagen del almacenamiento
+        Storage::disk('public')->delete($image->image_path);
+        $image->delete();
+
+        return response()->json(['success' => true, 'message' => 'Imagen eliminada correctamente']);
     }
 }

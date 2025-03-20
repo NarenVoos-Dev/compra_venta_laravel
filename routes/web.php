@@ -6,7 +6,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductImageController;
 
 
 //Welcome ventana princiapl de laravel
@@ -32,5 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class);
+    Route::delete('/product-images/{id}', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
 });
 require __DIR__.'/auth.php';
