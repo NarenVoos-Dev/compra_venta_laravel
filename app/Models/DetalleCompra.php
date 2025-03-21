@@ -24,5 +24,6 @@ class DetalleCompra extends Model
     public function producto(){
         return $this->belongsTo(Product::class,'product_id');
     }
+
     
 }

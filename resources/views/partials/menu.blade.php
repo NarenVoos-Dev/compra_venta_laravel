@@ -28,13 +28,26 @@
             <div id="two-column-menu">
             </div>
             <ul class="navbar-nav" id="navbar-nav">
-                <li class="menu-title"><span>Mantenimiento</span></li>
-                
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('categorias.index') }}">
                         <i class="ri-dashboard-line"></i> <span>Dashboard</span>
                     </a>
                 </li>
+                
+                <li class="menu-title"><span>Compras</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('compras.index') }}">
+                    <i class="ri-price-tag-3-line"></i> <span>Compras</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('compras.create') }}">
+                        <i class="ri-shopping-bag-3-line"></i><span>Nueva compra</span>
+                    </a>
+                </li>
+                
+                <li class="menu-title"><span>Mantenimiento</span></li>
+                
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('categorias.index') }}">
@@ -61,7 +74,6 @@
                         <i class="ri-user-settings-line"></i> <span>Usuarios</span>
                     </a>
                 </li>
-                <!-- end Dashboard Menu -->
             </ul>
         </div>
         <!-- Sidebar -->

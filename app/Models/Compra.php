@@ -30,7 +30,7 @@ class Compra extends Model
         return $this->belongsTo(TipoDocumento::class);
     }
     public function detalles(){
-        return $this->hasMany(DetalleCompra::class);
+        return $this->hasMany(DetalleCompra::class, 'purchase_id');
     }
 
 }
