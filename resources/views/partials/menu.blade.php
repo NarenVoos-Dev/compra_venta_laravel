@@ -37,12 +37,12 @@
                 <li class="menu-title"><span>Compras</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('compras.index') }}">
-                    <i class="ri-price-tag-3-line"></i> <span>Compras</span>
+                    <i class="ri-shopping-cart-line"></i> <span>Compras</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('compras.create') }}">
-                        <i class="ri-shopping-bag-3-line"></i><span>Nueva compra</span>
+                        <i class="ri-shopping-bag-line"></i><span>Nueva compra</span>
                     </a>
                 </li>
                 

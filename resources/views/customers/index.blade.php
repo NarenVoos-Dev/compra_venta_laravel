@@ -25,10 +25,12 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <a href="{{ route('customers.create') }}" class="mb-3 btn btn-primary">Nuevo Cliente</a>
+                        <a href="{{ route('customers.create') }}" class="mb-3 btn btn-primary">
+                        <i class="ri-add-line"></i> Nuevo Cliente
+                        </a>
 
                         @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
                         @endif
                         <table id="tabla-clientes"
                             class="table align-middle table-bordered dt-responsive nowrap table-striped" style="100%">
@@ -86,6 +88,7 @@
 <script>
 $(document).ready(function() {
     $('#tabla-clientes').DataTable({
+        "order": [[ 0, "desc" ]], // Ordena por la primera columna en orden descendente
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros por página",
             "zeroRecords": "No se encontraron resultados",
@@ -123,6 +126,16 @@ $(document).ready(function() {
             });
         });
     });
+
+        //mostrar alerta de tiempo
+    setTimeout(function() {
+        let alert = document.getElementById('success-alert');
+        if (alert) {
+            alert.style.transition = "opacity 0.5s ease-out";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 300);
+        }
+    }, 3000);
 });
 </script>
 @endpush

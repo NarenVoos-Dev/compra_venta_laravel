@@ -27,10 +27,12 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="container mt-4">
-                            <a href="{{ route('categorias.create') }}" class="mb-3 btn btn-primary">Nueva Categoría</a>
+                            <a href="{{ route('categorias.create') }}" class="mb-3 btn btn-primary">
+                                <i class="ri-add-line"></i> Nueva Categoría
+                            </a>
 
                             @if(session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
+                            <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
                             @endif
 
                             <table class="table align-middle table-bordered dt-responsive nowrap table-striped" id="tabla-categorias" >
@@ -87,6 +89,7 @@ $(document).ready(function() {
     //data table
 
     $('#tabla-categorias').DataTable({
+        "order": [[ 0, "desc" ]], // Ordena por la primera columna en orden descendente
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros por página",
             "zeroRecords": "No se encontraron resultados",
@@ -102,6 +105,16 @@ $(document).ready(function() {
             }
         }
     });
+
+        //mostrar alerta de tiempo
+    setTimeout(function() {
+        let alert = document.getElementById('success-alert');
+        if (alert) {
+            alert.style.transition = "opacity 0.5s ease-out";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 300);
+        }
+    }, 3000);
 });
 
 //Boton eliminar

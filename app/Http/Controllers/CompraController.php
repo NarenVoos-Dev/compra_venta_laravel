@@ -14,6 +14,14 @@ use App\Models\TipoDocumento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
+
+
+use Barryvdh\DomPDF\Facade\Pdf;
+
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
+
+
 class CompraController extends Controller
 {
    
@@ -27,7 +35,7 @@ class CompraController extends Controller
     public function create()
     {
         $suppliers = Supplier::all();
-        $tipodocumentos = TipoDocumento::all();
+        $tipodocumentos = TipoDocumento::where('type', 'compra')->get();
         $products = Product::all();
         
         return view('compras.create', compact('suppliers', 'tipodocumentos', 'products'));
@@ -36,7 +44,6 @@ class CompraController extends Controller
  
     public function store(Request $request)
     {   
-        //dd($request->all()); 
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'tipodocumento_id' => 'required|exists:tipodocumento,id',
@@ -47,43 +54,46 @@ class CompraController extends Controller
             'subtotales' => 'required|array',
             'total_cost' => 'required|numeric'
         ]);
-
-        DB::transaction(function () use ($request) {
-            // Obtener el usuario autenticado
+    
+        $compra = DB::transaction(function () use ($request) { // <-- Guardamos el retorno en $compra
             $user_id = Auth::id();
-
+    
             // Crear la compra
-        $compra = Compra::create([
-            'supplier_id' => $request->supplier_id,
-            'user_id' => $user_id,
-            'tipodocumento_id' => $request->tipodocumento_id,
-            'total_cost' => $request->total_cost,
-            'purchase_date' => $request->purchase_date, // O ajusta el estado según sea necesario
-        ]);
-
-        // Insertar los detalles de la compra
-        foreach ($request->productos as $index => $product_id) {
-            DetalleCompra::create([
-                'purchase_id' => $compra->id,
-                'product_id' => $product_id,
-                'quantity' => $request->cantidades[$index],
-                'unit_cost' => $request->precios[$index],
-                'subtotal' => $request->subtotales[$index],
-            ]);
-
-            // Actualizar inventario
-            Inventory::create([
-                'product_id' => $product_id,
-                'type' => 'purchase',
-                'quantity' => $request->cantidades[$index],
-                'description' => 'Compra ID ' . $compra->id,
+            $compra = Compra::create([
+                'supplier_id' => $request->supplier_id,
                 'user_id' => $user_id,
+                'tipodocumento_id' => $request->tipodocumento_id,
+                'total_cost' => $request->total_cost,
+                'purchase_date' => $request->purchase_date,
             ]);
-        }
-           
-
-
-             // Registrar la transacción
+    
+            foreach ($request->productos as $index => $product_id) {
+                // Crear detalle de compra
+                DetalleCompra::create([
+                    'purchase_id' => $compra->id,
+                    'product_id' => $product_id,
+                    'quantity' => $request->cantidades[$index],
+                    'unit_cost' => $request->precios[$index],
+                    'subtotal' => $request->subtotales[$index],
+                ]);
+    
+                // Actualizar inventario
+                Inventory::create([
+                    'product_id' => $product_id,
+                    'type' => 'purchase',
+                    'quantity' => $request->cantidades[$index],
+                    'description' => 'Compra ID ' . $compra->id,
+                    'user_id' => $user_id,
+                ]);
+    
+                // Actualizar stock del producto
+                $product = Product::find($product_id);
+                if ($product) {
+                    $product->increment('quantity', $request->cantidades[$index]);
+                }
+            }
+    
+            // Registrar la transacción
             Transaction::create([
                 'type' => 'purchase',
                 'amount' => $request->total_cost,
@@ -91,20 +101,17 @@ class CompraController extends Controller
                 'description' => 'Compra realizada',
                 'user_id' => $user_id,
             ]);
-           
+    
+            return $compra; // <-- Importante: Retornamos la compra
         });
 
+        //return view('compras.pdf', compact('compra'));
+
+        $this->generarPDF($compra);
+   
         return redirect()->route('compras.index')->with('success', 'Compra registrada correctamente');
     }
-
-
-    /*public function show($id)
-    {
-        $compra = Compra::with(['supplier', 'detalles.product', 'user', 'tipodocumento'])->findOrFail($id);
     
-        return view('compras.partials.detalle', compact('compra'))->render();
-    }*/
-
     public function show($id)
     {
         $compra = Compra::with(['supplier', 'detalles.producto', 'user', 'tipodocumento'])->find($id);
@@ -117,7 +124,7 @@ class CompraController extends Controller
     }
 
 
-    public function edit($id)
+    /*public function edit($id)
     {
         $compra = Compra::with('detalles')->findOrFail($id);
         $suppliers = Supplier::all();
@@ -192,7 +199,7 @@ class CompraController extends Controller
         });
     
         return redirect()->route('compras.index')->with('success', 'Compra actualizada correctamente');
-    }
+    }*/
     
 
    
@@ -224,6 +231,24 @@ class CompraController extends Controller
         });
     
         return redirect()->route('compras.index')->with('success', 'Compra eliminada correctamente');
+    }
+
+    public function generarPDF($compra)
+    {
+        $compra = Compra::with(['supplier', 'detalles.producto'])->find($compra->id);
+        
+        $pdf = Pdf::loadView('compras.pdf', compact('compra'));
+    
+        // Ruta donde se guardará el PDF
+        $pdfPath = "compras/compra_{$compra->id}.pdf";
+    
+        // Guardar el PDF en storage/app/public/compras/
+        Storage::put("public/$pdfPath", $pdf->output());
+    
+        return response()->json([
+            'message' => 'PDF generado correctamente',
+            'path' => asset("storage/$pdfPath")
+        ]);
     }
     
 }

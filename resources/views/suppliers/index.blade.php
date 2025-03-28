@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mantenimiento de Proveedores')
+@section('title', 'Proveedores')
 
 @section('content')
     <div class="page-content">
@@ -25,10 +25,12 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route('suppliers.create') }}" class="mb-3 btn btn-primary">Nuevo Proveedor</a>
+                            <a href="{{ route('suppliers.create') }}" class="mb-3 btn btn-primary">
+                            <i class="ri-add-line"></i> Nuevo Proveedor
+                            </a>
 
                             @if(session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
+                                <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
                             @endif
 
                             <div class="table-responsive">
@@ -86,43 +88,54 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            $('#tabla-proveedores').DataTable({
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
+    $(document).ready(function() {
+        $('#tabla-proveedores').DataTable({
+            "order": [[ 0, "desc" ]], // Ordena por la primera columna en orden descendente
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando página _PAGE_ de _PAGES_",
+                "infoEmpty": "No hay registros disponibles",
+                "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+
+        // SweetAlert2 para eliminación de proveedores
+        $(".delete-btn").on("click", function () {
+            let supplierId = $(this).data("id");
+
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "Esta acción no se puede deshacer.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#delete-form-" + supplierId).submit();
                 }
             });
-
-            // SweetAlert2 para eliminación de proveedores
-            $(".delete-btn").on("click", function () {
-                let supplierId = $(this).data("id");
-
-                Swal.fire({
-                    title: "¿Estás seguro?",
-                    text: "Esta acción no se puede deshacer.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Sí, eliminar",
-                    cancelButtonText: "Cancelar"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $("#delete-form-" + supplierId).submit();
-                    }
-                });
-            });
         });
+
+            //mostrar alerta de tiempo
+        setTimeout(function() {
+            let alert = document.getElementById('success-alert');
+            if (alert) {
+                alert.style.transition = "opacity 0.5s ease-out";
+                alert.style.opacity = "0";
+                setTimeout(() => alert.remove(), 300);
+            }
+        }, 3000);
+    });
     </script>
 @endpush

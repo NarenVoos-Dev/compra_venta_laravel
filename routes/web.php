@@ -11,6 +11,10 @@ use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\CompraController;
 
 
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade as PDF;
+
+
 //Welcome ventana princiapl de laravel
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +41,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('compras', CompraController::class);
     Route::delete('/product-images/{id}', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
+    Route::get('/compras/{id}/pdf', function ($id) {
+        $compra = Compra::with('supplier', 'detalles.product')->findOrFail($id);
     
+        $pdf = PDF::loadView('compras.pdf', compact('compra'));
+        return $pdf->stream("compra-{$id}.pdf");
+    })->name('compras.pdf'); 
+    Route::get('/generar-pdf', [CompraController::class, 'generarPDF']);   
+
+
 });
 require __DIR__.'/auth.php';

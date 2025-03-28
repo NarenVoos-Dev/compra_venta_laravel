@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mantenimiento de Productos')
+@section('title', 'Productos')
 
 @section('content')
 <div class="page-content">
@@ -18,7 +18,9 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <a href="{{ route('products.create') }}" class="mb-3 btn btn-primary">Nuevo Producto</a>
+                        <a href="{{ route('products.create') }}" class="mb-3 btn btn-primary">
+                        <i class="ri-add-line"></i> Nuevo Producto
+                        </a>
 
                         @if(session('success'))
                             <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
@@ -90,6 +92,7 @@
     <script>
         $(document).ready(function() {
             $('#tabla-productos').DataTable({
+                "order": [[ 0, "desc" ]], // Ordena por la primera columna en orden descendente
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
                     "zeroRecords": "No se encontraron resultados",
@@ -130,7 +133,7 @@
                 if (alert) {
                     alert.style.transition = "opacity 0.5s ease-out";
                     alert.style.opacity = "0";
-                    setTimeout(() => alert.remove(), 500);
+                    setTimeout(() => alert.remove(), 300);
                 }
             }, 3000);
 

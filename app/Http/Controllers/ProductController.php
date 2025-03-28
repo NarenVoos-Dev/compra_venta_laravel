@@ -42,30 +42,35 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'quantity' => $request->quantity,
-            'category_id' => $request->category_id,
-            'status' => $request->status,
-            'user_id' => auth()->id(), // Asigna el usuario autenticado
-        ]);
+        $productExists = Product::where('name', $request->name)->exists(); // Comprobar si el nombre del producto ya existe
+        if ($productExists) {
+            return redirect()->route('products.index')->with('success', 'El nombre del producto ya existe.');
+        }else{
 
-        // Guardar imágenes si se suben
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('products', 'public');
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_path' => $imagePath
-                ]);
+            $product = Product::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'quantity' => $request->quantity,
+                'category_id' => $request->category_id,
+                'status' => $request->status,
+                'user_id' => auth()->id(), // Asigna el usuario autenticado
+            ]);
+        
+            // Guardar imágenes si se suben
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('products', 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $imagePath
+                    ]);
+                }
             }
+
+
+            return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
         }
-
-
-        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
-
     }
 
 

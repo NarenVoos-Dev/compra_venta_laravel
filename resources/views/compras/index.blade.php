@@ -12,8 +12,8 @@
 
                     <div class="page-title-right">
                         <ol class="m-0 breadcrumb">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Mantenimiento</a></li>
-                            <li class="breadcrumb-item active">Compras</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Compras</a></li>
+                            <li class="breadcrumb-item active">Listado de compras</li>
                         </ol>
                     </div>
                 </div>
@@ -24,10 +24,12 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <a href="{{ route('compras.create') }}" class="mb-3 btn btn-primary">Nueva Compra</a>
+                        <a href="{{ route('compras.create') }}" class="mb-3 btn btn-primary">
+                            <i class="ri-add-line"></i> Nueva Compra
+                        </a>
 
                         @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
                         @endif
                         <table id="comprasTable" class="table table-striped">
                             <thead>
@@ -53,15 +55,18 @@
                                     <td>{{ $compra->purchase_date }}</td>
                                     <td>{{ $compra->status }}</td>
                                     <td>
-                                        <button class="btn btn-info btn-sm ver-detalles" data-id="{{ $compra->id }}" title="Ver detalles de la compra">
+                                        <button class="btn btn-info btn-sm ver-detalles" data-id="{{ $compra->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles">
                                             <i class="ri-eye-line"></i>
                                         </button>
-                                        <a href="{{ route('compras.edit', $compra->id) }}"
-                                            class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="editar compra">
-                                            <i class="ri-edit-2-line"></i>
+                                        <a href="{{ url('storage/compras/compra_' . $compra->id . '.pdf') }}" target="_blank" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="PDF">
+                                            <i class="ri-file-pdf-line"></i>
                                         </a>
+                                        <!--<a href="{{ route('compras.edit', $compra->id) }}"
+                                            class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar ">
+                                            <i class="ri-edit-2-line"></i>
+                                        </a>-->
                                         <button class="btn btn-danger btn-sm"
-                                            onclick="eliminarCompra({{ $compra->id }})">
+                                            onclick="eliminarCompra({{ $compra->id }})" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
                                             <i class="ri-delete-bin-6-line"></i>
                                         </button>
                                     </td>
@@ -111,6 +116,7 @@
 $(document).ready(function() {
     // Tabla de compras
     $('#comprasTable').DataTable({
+        "order": [[ 0, "desc" ]], // Ordena por la primera columna en orden descendente
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros por página",
             "zeroRecords": "No se encontraron resultados",
@@ -167,6 +173,16 @@ $(document).ready(function() {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     });
+    
+    //mostrar alerta de tiempo
+    setTimeout(function() {
+        let alert = document.getElementById('success-alert');
+        if (alert) {
+            alert.style.transition = "opacity 0.5s ease-out";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 3000);
 
 });
  //Eliminar compra
